@@ -10,6 +10,10 @@ MODELS = {
         "path": "models/cnn_scratch-50.h5",
         "size": (128, 128)
     },
+    "CNN with Data Augmentation": {
+        "path": "models/cnn_data-augmentation.h5",
+        "size": (224, 224)
+    },
     "DNN": {
         "path": "models/dnn.h5",
         "size": (224, 224)
@@ -65,6 +69,31 @@ def predict_CNN(model_name, img):
     print("Predicting the image class")
     pred = model.predict(img)
     if pred[0][0] > pred[0][1]:
+        prediction = "Benign"
+    else:
+        prediction = "Melanoma"
+    print(f"Prediction: {prediction}")
+
+    return prediction
+
+def predict_CNN_augmentation(model_name, img):
+    # Load the model
+    print(f"Loading model: {model_name}")
+    model_path = MODELS[model_name]["path"]
+    model = load_model(model_path)
+
+    # Load the image with size depending on the model
+    print("Loading image")
+    img = Image.open(img)
+    img = img.resize((224, 224))
+    img = np.array(img)
+    img = img/255.
+    img = img.reshape(1,224,224,3)
+    
+    # Predict
+    print("Predicting the image class")
+    pred = model.predict(img)
+    if pred[0][0] < 0.5:
         prediction = "Benign"
     else:
         prediction = "Melanoma"
@@ -133,8 +162,10 @@ def main():
             placeholder.write("⏳ Analyzing your image with Artificial Intelligence...")
 
             # Predict
-            if model_name == "CNN from Scratch":
+            if model_name == "CNN from Scratch" or model_name == "DNN":
                 prediction = predict_CNN(model_name, uploaded_file)
+            if model_name == "CNN with Data Augmentation":
+                prediction = predict_CNN_augmentation(model_name, uploaded_file)
             if model_name == "Transfer Learning (VGG19)":
                 prediction = predict_VGG19(model_name, uploaded_file)
             if model_name == "Transfer Learning (ResNet151)":
