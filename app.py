@@ -10,6 +10,10 @@ MODELS = {
         "path": "models/cnn_scratch-50.h5",
         "size": (128, 128)
     },
+    "DNN": {
+        "path": "models/dnn.h5",
+        "size": (224, 224)
+    },
     "Transfer Learning (VGG19)": {
         "path": "models/cnn_vgg19-100L2.h5",
         "size": (224, 224)
