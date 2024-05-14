@@ -1,14 +1,25 @@
 import streamlit as st
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
+from PIL import Image
+import numpy as np
+from tensorflow.keras.applications import VGG19
 
 MODELS = {
     "CNN from Scratch": {
-        "path": "models/cnn_scratch-40.h5",
+        "path": "models/cnn_scratch-50.h5",
         "size": (128, 128)
     },
+    "CNN with Data Augmentation": {
+        "path": "models/cnn_data-augmentation.h5",
+        "size": (224, 224)
+    },
+    "DNN": {
+        "path": "models/dnn.h5",
+        "size": (224, 224)
+    },
     "Transfer Learning (VGG19)": {
-        "path": "models/cnn_vgg19-100.h5",
+        "path": "models/cnn_vgg19-100L2.h5",
         "size": (224, 224)
     },
     "Transfer Learning (ResNet151)": {
@@ -17,7 +28,7 @@ MODELS = {
     }
 }
 
-def predict(model_name, img):
+def predict_ResNet(model_name, img):
     # Load the model
     print(f"Loading model: {model_name}")
     model_path = MODELS[model_name]["path"]
@@ -39,6 +50,87 @@ def predict(model_name, img):
     print(f"Prediction: {prediction}")
 
     return prediction
+
+def predict_CNN(model_name, img):
+    # Load the model
+    print(f"Loading model: {model_name}")
+    model_path = MODELS[model_name]["path"]
+    model = load_model(model_path)
+
+    # Load the image with size depending on the model
+    print("Loading image")
+    img = Image.open(img)
+    img = img.resize((224, 224))
+    img = np.array(img)
+    img = img/255.
+    img = img.reshape(1,224,224,3)
+    
+    # Predict
+    print("Predicting the image class")
+    pred = model.predict(img)
+    if pred[0][0] > pred[0][1]:
+        prediction = "Benign"
+    else:
+        prediction = "Melanoma"
+    print(f"Prediction: {prediction}")
+
+    return prediction
+
+def predict_CNN_augmentation(model_name, img):
+    # Load the model
+    print(f"Loading model: {model_name}")
+    model_path = MODELS[model_name]["path"]
+    model = load_model(model_path)
+
+    # Load the image with size depending on the model
+    print("Loading image")
+    img = Image.open(img)
+    img = img.resize((224, 224))
+    img = np.array(img)
+    img = img/255.
+    img = img.reshape(1,224,224,3)
+    
+    # Predict
+    print("Predicting the image class")
+    pred = model.predict(img)
+    if pred[0][0] < 0.5:
+        prediction = "Benign"
+    else:
+        prediction = "Melanoma"
+    print(f"Prediction: {prediction}")
+
+    return prediction
+
+def predict_VGG19(model_name, img):
+    # Load the model
+    print(f"Loading model: {model_name}")
+    model_path = MODELS[model_name]["path"]
+    model = load_model(model_path)
+    conv_base = VGG19(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+
+    # Load the image with size depending on the model
+    print("Loading image")
+    img = Image.open(img)
+    img = img.resize((224, 224))
+    img = np.array(img)
+    img = img / 255.0
+    img = img.reshape((1, 224, 224, 3))
+    features = conv_base.predict(img)
+    features = features.reshape(1, 7 * 7 * 512)
+    
+    # Predict
+    print("Predicting the image class")
+    pred = model.predict(features)
+    if pred[0][0] > pred[0][1]:
+        prediction = "Benign"
+    else:
+        prediction = "Melanoma"
+    print(f"Prediction: {prediction}")
+
+    return prediction
+
+
+
 
 def main():
     # Favicon
@@ -70,7 +162,14 @@ def main():
             placeholder.write("⏳ Analyzing your image with Artificial Intelligence...")
 
             # Predict
-            prediction = predict(model_name, uploaded_file)
+            if model_name == "CNN from Scratch" or model_name == "DNN":
+                prediction = predict_CNN(model_name, uploaded_file)
+            if model_name == "CNN with Data Augmentation":
+                prediction = predict_CNN_augmentation(model_name, uploaded_file)
+            if model_name == "Transfer Learning (VGG19)":
+                prediction = predict_VGG19(model_name, uploaded_file)
+            if model_name == "Transfer Learning (ResNet151)":
+                prediction = predict_ResNet(model_name, uploaded_file)
             placeholder.empty()
 
             # Prediction
@@ -83,7 +182,7 @@ def main():
     
     # Footer
     st.markdown("---")
-    st.markdown("👩🏻‍💻 Made by: [María Belén Salgado](https://github.com/MARIABELENSB), [Blanca Martínez](https://github.com/blancamartnez), [Elena Cabrera](https://github.com/elena-cabrera)")
+    st.markdown("👩🏻‍💻 Made by: [María Belén Salgado](https://github.com/MARIABELENSB), [Blanca Martínez Rubio](https://github.com/blancamartnez), [Elena Cabrera](https://github.com/elena-cabrera)")
 
 if __name__ == "__main__":
     main()
