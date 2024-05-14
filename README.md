@@ -37,7 +37,8 @@ Several Deep Learning techniques have been used to classify the images, from mor
 - Pandas
 
 ## 🚀 Deployment
-An interactive web application has been developed using Streamlit to classify images of skin lesions. The application allows the user to upload an image and get the prediction of the model. The application is hosted on Streamlit Sharing and can be accessed [here]().
+An interactive web application has been developed using Streamlit to classify images of skin lesions. The application allows the user to upload an image and get the prediction of the model.
+[![Watch the video](img/Captura%20de%20pantalla%202024-05-14%20204624.png)](img/skinCancerDetector.mov)
 
 ## 👩🏻‍💻 Authors
 - [Blanca Martínez Rubio](https://github.com/blancamartnez)
