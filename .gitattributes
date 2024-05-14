@@ -1,3 +1,5 @@
 models/ResNet152_0.001_30.h5 filter=lfs diff=lfs merge=lfs -text
 models/Resnet152_0.001_5.h5 filter=lfs diff=lfs merge=lfs -text
 models/ResNet152_0.001_30.h5 filter=lfs diff=lfs merge=lfs -text
+*.h5 filter=lfs diff=lfs merge=lfs -text
+models/ResNet50_0.0001_30.keras filter=lfs diff=lfs merge=lfs -text
