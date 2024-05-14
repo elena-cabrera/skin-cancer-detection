@@ -22,7 +22,7 @@ MODELS = {
         "path": "models/cnn_vgg19-100L2.h5",
         "size": (224, 224)
     },
-    "Transfer Learning (ResNet151)": {
+    "Transfer Learning (ResNet50)": {
         "path": "models/ResNet50_0.0001_30.keras",
         "size": (224, 224)
     }
