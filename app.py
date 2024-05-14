@@ -15,7 +15,7 @@ MODELS = {
         "size": (224, 224)
     },
     "DNN": {
-        "path": "models/dnn_2.h5",
+        "path": "models/dnn.h5",
         "size": (224, 224)
     },
     "Transfer Learning (VGG19)": {
@@ -29,108 +29,121 @@ MODELS = {
 }
 
 def predict_ResNet(model_name, img):
-    # Load the model
-    print(f"Loading model: {model_name}")
-    model_path = MODELS[model_name]["path"]
-    model = load_model(model_path)
+    try:
+        # Load the model
+        print(f"Loading model: {model_name}")
+        model_path = MODELS[model_name]["path"]
+        model = load_model(model_path)
 
-    # Load the image with size depending on the model
-    print("Loading image")
-    img_size = MODELS[model_name]["size"]
-    img = image.load_img(img, target_size=img_size)
-    print("Image loaded, resizing and normalizing the image")
-    img_array = image.img_to_array(img)
-    img_array = img_array / 255.0
-    img_array = img_array.reshape(1, *img_size, 3)
+        # Load the image with size depending on the model
+        print("Loading image")
+        img_size = MODELS[model_name]["size"]
+        img = image.load_img(img, target_size=img_size)
+        print("Image loaded, resizing and normalizing the image")
+        img_array = image.img_to_array(img)
+        img_array = img_array / 255.0
+        img_array = img_array.reshape(1, *img_size, 3)
 
-    # Predict
-    print("Predicting the image class")
-    prediction = model.predict(img_array)
-    prediction = "Benign" if prediction < 0.5 else "Melanoma"
-    print(f"Prediction: {prediction}")
+        # Predict
+        print("Predicting the image class")
+        prediction = model.predict(img_array)
+        prediction = "Benign" if prediction < 0.5 else "Melanoma"
+        print(f"Prediction: {prediction}")
 
-    return prediction
+        return prediction
+    except Exception as e:
+        print(f"Error loading model or predicting: {e}")
+        return "Error"
 
 def predict_CNN(model_name, img):
-    # Load the model
-    print(f"Loading model: {model_name}")
-    model_path = MODELS[model_name]["path"]
-    model = load_model(model_path)
+    try:
+        # Load the model
+        print(f"Loading model: {model_name}")
+        model_path = MODELS[model_name]["path"]
+        model = load_model(model_path)
 
-    # Load the image with size depending on the model
-    print("Loading image")
-    img = Image.open(img)
-    img = img.resize((224, 224))
-    img = np.array(img)
-    img = img/255.
-    img = img.reshape(1,224,224,3)
-    
-    # Predict
-    print("Predicting the image class")
-    pred = model.predict(img)
-    if pred[0][0] > pred[0][1]:
-        prediction = "Benign"
-    else:
-        prediction = "Melanoma"
-    print(f"Prediction: {prediction}")
+        # Load the image with size depending on the model
+        print("Loading image")
+        img = Image.open(img)
+        img = img.resize((224, 224))
+        img = np.array(img)
+        img = img/255.
+        img = img.reshape(1,224,224,3)
+        
+        # Predict
+        print("Predicting the image class")
+        pred = model.predict(img)
+        if pred[0][0] > pred[0][1]:
+            prediction = "Benign"
+        else:
+            prediction = "Melanoma"
+        print(f"Prediction: {prediction}")
 
-    return prediction
+        return prediction
+    except Exception as e:
+        print(f"Error loading model or predicting: {e}")
+        return "Error"
 
 def predict_CNN_augmentation(model_name, img):
-    # Load the model
-    print(f"Loading model: {model_name}")
-    model_path = MODELS[model_name]["path"]
-    model = load_model(model_path)
+    try:
+        # Load the model
+        print(f"Loading model: {model_name}")
+        model_path = MODELS[model_name]["path"]
+        model = load_model(model_path)
 
-    # Load the image with size depending on the model
-    print("Loading image")
-    img = Image.open(img)
-    img = img.resize((224, 224))
-    img = np.array(img)
-    img = img/255.
-    img = img.reshape(1,224,224,3)
-    
-    # Predict
-    print("Predicting the image class")
-    pred = model.predict(img)
-    if pred[0][0] < 0.5:
-        prediction = "Benign"
-    else:
-        prediction = "Melanoma"
-    print(f"Prediction: {prediction}")
+        # Load the image with size depending on the model
+        print("Loading image")
+        img = Image.open(img)
+        img = img.resize((224, 224))
+        img = np.array(img)
+        img = img/255.
+        img = img.reshape(1,224,224,3)
+        
+        # Predict
+        print("Predicting the image class")
+        pred = model.predict(img)
+        if pred[0][0] < 0.5:
+            prediction = "Benign"
+        else:
+            prediction = "Melanoma"
+        print(f"Prediction: {prediction}")
 
-    return prediction
+        return prediction
+    except Exception as e:
+        print(f"Error loading model or predicting: {e}")
+        return "Error"
 
 def predict_VGG19(model_name, img):
-    # Load the model
-    print(f"Loading model: {model_name}")
-    model_path = MODELS[model_name]["path"]
-    model = load_model(model_path)
-    conv_base = VGG19(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+    try:
+        # Load the model
+        print(f"Loading model: {model_name}")
+        model_path = MODELS[model_name]["path"]
+        model = load_model(model_path)
+        conv_base = VGG19(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 
-    # Load the image with size depending on the model
-    print("Loading image")
-    img = Image.open(img)
-    img = img.resize((224, 224))
-    img = np.array(img)
-    img = img / 255.0
-    img = img.reshape((1, 224, 224, 3))
-    features = conv_base.predict(img)
-    features = features.reshape(1, 7 * 7 * 512)
-    
-    # Predict
-    print("Predicting the image class")
-    pred = model.predict(features)
-    if pred[0][0] > pred[0][1]:
-        prediction = "Benign"
-    else:
-        prediction = "Melanoma"
-    print(f"Prediction: {prediction}")
+        # Load the image with size depending on the model
+        print("Loading image")
+        img = Image.open(img)
+        img = img.resize((224, 224))
+        img = np.array(img)
+        img = img / 255.0
+        img = img.reshape((1, 224, 224, 3))
+        features = conv_base.predict(img)
+        features = features.reshape(1, 7 * 7 * 512)
+        
+        # Predict
+        print("Predicting the image class")
+        pred = model.predict(features)
+        if pred[0][0] > pred[0][1]:
+            prediction = "Benign"
+        else:
+            prediction = "Melanoma"
+        print(f"Prediction: {prediction}")
 
-    return prediction
-
-
-
+        return prediction
+    except Exception as e:
+        print(f"Error loading model or predicting: {e}")
+        return "Error"
 
 def main():
     # Favicon
@@ -164,11 +177,11 @@ def main():
             # Predict
             if model_name == "CNN from Scratch" or model_name == "DNN":
                 prediction = predict_CNN(model_name, uploaded_file)
-            if model_name == "CNN with Data Augmentation":
+            elif model_name == "CNN with Data Augmentation":
                 prediction = predict_CNN_augmentation(model_name, uploaded_file)
-            if model_name == "Transfer Learning (VGG19)":
+            elif model_name == "Transfer Learning (VGG19)":
                 prediction = predict_VGG19(model_name, uploaded_file)
-            if model_name == "Transfer Learning (ResNet151)":
+            elif model_name == "Transfer Learning (ResNet50)":
                 prediction = predict_ResNet(model_name, uploaded_file)
             placeholder.empty()
 
@@ -176,9 +189,12 @@ def main():
             if prediction == "Benign":
                 st.write(f"✅ **{prediction}**")
                 st.write("This skin mole does not appear to be cancerous. However, the AI model is not 100% accurate. Please consult a dermatologist.")
-            else:
+            elif prediction == "Melanoma":
                 st.write(f"⚠️ **{prediction}**")
                 st.write("This skin mole appears to be cancerous. Please consult a dermatologist immediately.")
+            else:
+                st.write("❌ **Error**")
+                st.write("There was an error processing your request. Please try again later.")
     
     # Footer
     st.markdown("---")
