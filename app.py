@@ -15,7 +15,7 @@ MODELS = {
         "size": (224, 224)
     },
     "DNN": {
-        "path": "models/dnn.h5",
+        "path": "models/dnn_2.h5",
         "size": (224, 224)
     },
     "Transfer Learning (VGG19)": {
@@ -23,7 +23,7 @@ MODELS = {
         "size": (224, 224)
     },
     "Transfer Learning (ResNet151)": {
-        "path": "models/ResNet152_0.001_5.h5",
+        "path": "models/ResNet50_0.0001_30.keras",
         "size": (224, 224)
     }
 }
